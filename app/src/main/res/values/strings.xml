@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Jogo-da-velha</string>
     <string name="texto">Jogo da Velha</string>
+    <string name="textoTP">Tic Tac Toe</string>
 </resources>

@@ -5,29 +5,43 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
-    //variáveis bonitinhas
+    //variáveis
     private Button[] arrayBotoes = new Button[10];
     private String opcao = "X"; //será criado um alerta para definir qual é a vez que o usuário escolher
     private int jogadas = 0;
     private String[] posicoes = new String[10]; //posições do tabuleiro no jogo
     private Button botaoRestart;
+    private Button botaoVoltar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //botao resetar jogo
         botaoRestart = findViewById(R.id.botaoRestart);
         botaoRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetarJogo();
+            }
+        });
+
+        //botao para voltar para a tela principal
+        botaoVoltar = findViewById(R.id.botaoVoltar);
+        botaoVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, PrimeiraTela.class);
+                intent.putExtra("acao", "voltar");
+                startActivity(intent);
             }
         });
 
@@ -46,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //método para ativar os botões - onClickButtons
+    //método para ativar os botões
     private void ativarBotoes(){
         for (int i = 1; i<10;i++){
             int finalI = i;
@@ -59,7 +73,15 @@ public class MainActivity extends AppCompatActivity {
             posicoes[i]=""; // ele inicializa os botoes como vazio para depois trocar
         }
     }
-    //ainda será implementado um alerta que substituirá a opção X como escolha padrão aqui ness método
+
+    //método para atualizar o jogo
+    private void exibirJogadas(){
+        for (int x = 1; x<10;x++){
+            arrayBotoes[x].setText(posicoes[x]);
+        }
+    }
+
+    //método que verifica de quem é a véz de jogar e evita a sobreposição da opção (X ou O)
     private void jogada(int x){
         if(posicoes[x] == ""){
             posicoes[x] = opcao;
@@ -72,13 +94,6 @@ public class MainActivity extends AppCompatActivity {
         }
         exibirJogadas();
         verifica();
-    }
-
-    //método para atualizar o jogo
-    private void exibirJogadas(){
-        for (int x = 1; x<10;x++){
-            arrayBotoes[x].setText(posicoes[x]);
-        }
     }
 
     //método para exibir o alerta do resultado do jogo
@@ -138,70 +153,57 @@ public class MainActivity extends AppCompatActivity {
         if(posicoes[7].equals(posicoes[8]) &&
                 posicoes[7].equals(posicoes[9]) && posicoes[7].toString() != ""){
             verificaGanhador(posicoes[7]);
-
             return;
         }
         //ganhador 1ª coluna
         if(posicoes[1].equals(posicoes[4]) &&
                 posicoes[1].equals(posicoes[7]) && posicoes[1].toString() != ""){
             verificaGanhador(posicoes[1]);
-
             return;
         }
         //ganhador 2ª coluna
         if(posicoes[2].equals(posicoes[5]) &&
                 posicoes[2].equals(posicoes[8]) && posicoes[2].toString() != ""){
             verificaGanhador(posicoes[2]);
-
             return;
         }
         //ganhador 3ª coluna
         if(posicoes[3].equals(posicoes[6]) &&
                 posicoes[3].equals(posicoes[9]) && posicoes[3].toString() != ""){
             verificaGanhador(posicoes[3]);
-
             return;
         }
         //ganhador diagonal principal
         if(posicoes[1].equals(posicoes[5]) &&
                 posicoes[1].equals(posicoes[9]) && posicoes[1].toString() != ""){
             verificaGanhador(posicoes[1]);
-
             return;
         }
         //ganhador diagonal secundária
         if(posicoes[3].equals(posicoes[5]) &&
                 posicoes[3].equals(posicoes[7]) && posicoes[3].toString() != ""){
             verificaGanhador(posicoes[3]);
-
             return;
         }
         //Em caso de empate - todos campos preenchidos
         if (jogadas == 9){
             verificaGanhador("");
-
             return;
         }
     }
 
-    //método do alert para escolher
+    //método do alert para escolher qual jogador vai utilizar qual opção
     private void escolherForma(){
         androidx.appcompat.app.AlertDialog.Builder alerta = new androidx.appcompat.app.AlertDialog.Builder(this);
         alerta.setTitle("Escolha sua forma => Player 1");
-        // alerta.setIcon(android.R.drawable.ic_input_add);
-
-        //EditText etForma = new EditText(this);
-        //etForma.setHint("Primeiro Jogador:");
-
-        //alerta.setView(etForma);
-
+        //Definição de botão neutro para a opção "X"
         alerta.setNeutralButton("X", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 opcao="X";
             }
         });
-
+        //Definição de botão neutro para a opção "O"
         alerta.setPositiveButton("0", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -211,7 +213,9 @@ public class MainActivity extends AppCompatActivity {
         alerta.show();
     }
 
-
+    /* Método criado para resetar o jogo, definindo as jogadas e posições como vazias
+     e dando a possibilidade de rescolha das opções
+    */
     private void resetarJogo(){
         jogadas = 0;
         for (int x = 1;x<10;x++){
@@ -219,6 +223,5 @@ public class MainActivity extends AppCompatActivity {
         }
         exibirJogadas();
         escolherForma();
-
     }
 }
